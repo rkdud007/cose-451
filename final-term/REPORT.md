@@ -8,15 +8,15 @@ The vulnerability was located in the Rust standard library, specifically within 
 
 1. **File:** `rust/library/alloc/src/vec/source_iter_marker.rs`
 
-   - **Lines:** 71 to 72
-
    ```rust
    // drop any remaining values at the tail of the source
    src.drop_remaining();
    ```
 
 2. **File:** `rust/library/alloc/src/vec/into_iter.rs`
-   - **Lines**: 88 to 93
+
+   - `drop_remaining()`
+
    ```rust
    pub(super) fn drop_remaining(&mut self) {
     unsafe {
@@ -81,7 +81,7 @@ Dropping!
 free(): double free detected in tcache 2
 ```
 
-n the PoC, the vector v contains elements that trigger a panic during the drop operation. The PanicOnDrop variant causes a panic unless the thread is already panicking. This leads to drop_remaining() being called again due to panic unwinding, causing the DroppedTwice variant to be dropped twice, as shown by the "Dropping!" messages and the resulting double free error.
+n the PoC, the vector `v` contains elements that trigger a panic during the drop operation. The `PanicOnDrop` variant causes a panic unless the thread is already panicking. This leads to `drop_remaining()` being called again due to panic unwinding, causing the `DroppedTwice` variant to be dropped twice, because functions dropping self first and then later adjust pointer. As shown by the "Dropping!" messages and the resulting double free error.
 
 ## Patch for the Vulnerability
 

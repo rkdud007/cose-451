@@ -1,3 +1,4 @@
+````rust
 // =============================================================================
 // The code base below is from `library/alloc/src/vec/into_iter.rs`
 // =============================================================================
@@ -35,3 +36,4 @@ pub(super) fn forget_allocation_drop_remaining(&mut self) {
 // but prevent drop of the allocation itself once IntoIter goes out of scope
 // if the drop panics then we also leak any elements collected into dst_buf
 src.forget_allocation_drop_remaining();
+````
